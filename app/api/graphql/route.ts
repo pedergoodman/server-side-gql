@@ -4,11 +4,10 @@ import {
   ApolloServerPluginLandingPageLocalDefault,
   ApolloServerPluginLandingPageProductionDefault,
 } from '@apollo/server/plugin/landingPage/default'
-import { addMocksToSchema } from '@graphql-tools/mock'
-import { makeExecutableSchema } from '@graphql-tools/schema'
 import { NextRequest } from 'next/server'
-import { schema } from './schema'
-import { resolvers } from './resolvers'
+import typeDefs from './schema'
+import resolvers from './resolvers'
+import { getUserFromToken } from '@/utils/auth'
 
 let plugins = []
 if (process.env.NODE_ENV === 'production') {
@@ -24,13 +23,19 @@ if (process.env.NODE_ENV === 'production') {
 
 const server = new ApolloServer({
   resolvers,
-  typeDefs: schema,
+  typeDefs,
   plugins,
 })
 
-// This is the handler that will be used by the Next.js API route
-// This will be different if you're using different technologies like Express.js instead of Next.js
-const handler = startServerAndCreateNextHandler<NextRequest>(server, {})
+const handler = startServerAndCreateNextHandler<NextRequest>(server, {
+  context: async (req) => {
+    const user = await getUserFromToken(req.headers.get('authorization') ?? '')
+    return {
+      req,
+      user,
+    }
+  },
+})
 
 export async function GET(request: NextRequest) {
   return handler(request)

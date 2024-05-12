@@ -60,7 +60,10 @@ const Status = ({ status, issueId }) => {
         >
           <span>In Progress</span>
         </DropdownItem>
-        <DropdownItem key="DONE" startContent={<StatusRing status={'DONE'} />}>
+        <DropdownItem 
+          key="DONE" 
+          startContent={<StatusRing status={'DONE'} />}
+        >
           <span>Done</span>
         </DropdownItem>
       </DropdownMenu>

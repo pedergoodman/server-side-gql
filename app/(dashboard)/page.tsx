@@ -54,6 +54,8 @@ const IssuesPage = () => {
           </button>
         </Tooltip>
       </PageHeader>
+
+      
       {fetching && <Spinner />}
       {error && <div>error</div>}
       {data &&
